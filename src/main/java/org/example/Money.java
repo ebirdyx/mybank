@@ -15,7 +15,7 @@ public class Money {
     }
 
     public String formatAsCurrency() {
-        NumberFormat formatter = new DecimalFormat("##.00");
+        NumberFormat formatter = new DecimalFormat("$ ##.00");
         return formatter.format(value);
     }
 }
