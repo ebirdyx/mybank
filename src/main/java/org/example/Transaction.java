@@ -10,6 +10,7 @@ public class Transaction {
     private String description;
 
     public Transaction(int id, Date date, double amount, TransactionType type, String description) {
+        // TODO: amount must be positive
         this.id = id;
         this.date = date;
         this.amount = new Money(amount);
@@ -39,5 +40,13 @@ public class Transaction {
 
     public String getDescription() {
         return description;
+    }
+
+    public double getValue() {
+        if (type == TransactionType.Credit) {
+            return amount.getValue() * -1;
+        }
+
+        return amount.getValue();
     }
 }

@@ -5,7 +5,7 @@ import java.util.*;
 public class MyBank {
     private final String[] columns = new String[]{"ID", "Date", "Type", "Amount", "Description"};
 
-    private List<Transaction> transactions;
+    private final List<Transaction> transactions;
 
     public MyBank() {
         this.transactions = new ArrayList<>();
@@ -14,7 +14,11 @@ public class MyBank {
     }
 
     public Money getTotal() {
-        return new Money(200);
+        double total = transactions.stream()
+                .map(Transaction::getValue)
+                .reduce(0.0, Double::sum);
+
+        return new Money(total);
     }
 
     public String[] getColumns() {
