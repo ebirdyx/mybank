@@ -22,16 +22,6 @@ public class MyBank extends AbstractTableModel {
         return new Money(total);
     }
 
-    public String[] getColumns() {
-        return columns;
-    }
-
-    public String[][] getTransactionsTable() {
-        return transactions.stream()
-                .map(Transaction::toList)
-                .toArray(String[][]::new);
-    }
-
     public void createTransaction(double amount, TransactionType type, String description) {
         transactions.add(new Transaction(transactions.size()+1, new Date(), amount, type, description));
         fireTableDataChanged();

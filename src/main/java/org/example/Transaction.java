@@ -18,10 +18,6 @@ public class Transaction {
         this.description = description;
     }
 
-    public String[] toList() {
-        return new String[]{""+id, date.toString(), type.toString(), amount.formatAsCurrency(), description};
-    }
-
     public int getId() {
         return id;
     }
