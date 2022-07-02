@@ -1,6 +1,7 @@
 package org.example;
 
 import javax.swing.table.AbstractTableModel;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MyBank extends AbstractTableModel {
@@ -10,8 +11,8 @@ public class MyBank extends AbstractTableModel {
 
     public MyBank() {
         this.transactions = new ArrayList<>();
-        this.transactions.add(new Transaction(1, new Date(2022, Calendar.MARCH, 5), 22.04, TransactionType.Credit, "Bought something"));
-        this.transactions.add(new Transaction(2, new Date(2022, Calendar.APRIL, 6), 40.84, TransactionType.Debit, "Deposit something"));
+        this.transactions.add(new Transaction(1, new Date(2022 - 1900, Calendar.MARCH, 5, 10, 23, 20), 22.04, TransactionType.Credit, "Bought something"));
+        this.transactions.add(new Transaction(2, new Date(2022 - 1900, Calendar.APRIL, 6, 14, 57, 11), 40.84, TransactionType.Debit, "Deposit something"));
     }
 
     public Money getTotal() {
@@ -44,7 +45,8 @@ public class MyBank extends AbstractTableModel {
             case 0:
                 return tr.getId();
             case 1:
-                return tr.getDate();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                return formatter.format(tr.getDate());
             case 2:
                 return tr.getType().toString();
             case 3:
