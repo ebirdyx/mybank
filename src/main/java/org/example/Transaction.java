@@ -1,5 +1,9 @@
 package org.example;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Transaction {
@@ -44,5 +48,27 @@ public class Transaction {
         }
 
         return amount.getValue();
+    }
+
+    public String toSql() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+        return "INSERT INTO transactions (id, date, type, amount, description) VALUES ("
+                + id + ", '"
+                + formatter.format(date) + "', '"
+                + type.toString() + "', "
+                + amount.getValue() + ", '"
+                + description
+                + "');";
+    }
+
+    public static Transaction makeTransactionFromSql(ResultSet rs) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = formatter.parse(rs.getString("date"), new ParsePosition(0));
+            return new Transaction(rs.getInt("id"), date, rs.getDouble("amount"), TransactionType.valueOf(rs.getString("type")), rs.getString("description"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

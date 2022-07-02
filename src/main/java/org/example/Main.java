@@ -2,7 +2,8 @@ package org.example;
 
 public class Main {
     public static void main(String[] args) {
-        MyBank bank = new MyBank();
+        Database db = new Database();
+        MyBank bank = new MyBank(db);
         new MainWindow(bank);
     }
 }
