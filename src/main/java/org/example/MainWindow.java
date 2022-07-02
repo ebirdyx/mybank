@@ -29,11 +29,13 @@ public class MainWindow extends JFrame {
         JButton credit = new JButton("Credit");
         credit.addActionListener(e -> {
             newTransaction(bank, TransactionType.Credit);
+            totalValue.setText(bank.getTotal().formatAsCurrency());
         });
 
         JButton debit = new JButton("Debit");
         debit.addActionListener(e -> {
             newTransaction(bank, TransactionType.Debit);
+            totalValue.setText(bank.getTotal().formatAsCurrency());
         });
 
         actionsPanel.add(credit);
