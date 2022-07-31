@@ -5,6 +5,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class LoginWindow extends JDialog {
+    private Authentication authSvc;
     private JTextField tfUsername;
     private JPasswordField pfPassword;
     private JLabel lbUsername;
@@ -13,9 +14,11 @@ public class LoginWindow extends JDialog {
     private JButton btnCancel;
     private boolean succeeded;
 
-    public LoginWindow(Frame parent) {
-        super(parent, "Login", true);
-        //
+    public LoginWindow(Authentication authSvc) {
+        super(new JFrame(), "Login", true);
+
+        this.authSvc = authSvc;
+
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
 
@@ -49,7 +52,7 @@ public class LoginWindow extends JDialog {
         btnLogin = new JButton("Login");
 
         btnLogin.addActionListener(e -> {
-            if (Authentication.authenticate(getUsername(), getPassword())) {
+            if (this.authSvc.authenticate(getUsername(), getPassword())) {
                 JOptionPane.showMessageDialog(LoginWindow.this,
                         "Hi " + getUsername() + "! You have successfully logged in.",
                         "Login",
@@ -61,15 +64,18 @@ public class LoginWindow extends JDialog {
                         "Invalid username or password",
                         "Login",
                         JOptionPane.ERROR_MESSAGE);
+
                 // reset username and password
                 tfUsername.setText("");
                 pfPassword.setText("");
                 succeeded = false;
             }
         });
+
         btnCancel = new JButton("Cancel");
         btnCancel.addActionListener(e -> dispose());
         JPanel bp = new JPanel();
+
         bp.add(btnLogin);
         bp.add(btnCancel);
 
@@ -78,7 +84,6 @@ public class LoginWindow extends JDialog {
 
         pack();
         setResizable(false);
-        setLocationRelativeTo(parent);
     }
 
     public String getUsername() {

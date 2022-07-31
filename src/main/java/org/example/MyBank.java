@@ -14,22 +14,9 @@ public class MyBank extends AbstractTableModel {
     public MyBank(Database database) {
         this.db = database;
         createTransactionsTable();
-        if (!isSeeded()) {
+        if (!db.isTableSeeded("transactions")) {
             seedTransactions();
         }
-    }
-
-    private boolean isSeeded() {
-        String query = "SELECT COUNT(*) FROM transactions;";
-        ResultSet rs = db.selectQuery(query);
-        try {
-            if (rs.next())
-                return true;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return false;
     }
 
     private void seedTransactions() {

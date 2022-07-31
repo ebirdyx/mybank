@@ -41,4 +41,21 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean isTableSeeded(String table) {
+        String query = "SELECT COUNT(*) AS count FROM " + table + ";";
+
+        try {
+            ResultSet rs = selectQuery(query);
+
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
 }

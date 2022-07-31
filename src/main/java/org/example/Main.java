@@ -4,12 +4,15 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        LoginWindow login = new LoginWindow(new JFrame());
+        Database db = new Database();
+
+        Authentication authSvc = new Authentication(db);
+
+        LoginWindow login = new LoginWindow(authSvc);
 
         login.setVisible(true);
 
         if (login.isSucceeded()) {
-            Database db = new Database();
             MyBank bank = new MyBank(db);
             new MainWindow(bank);
         }
