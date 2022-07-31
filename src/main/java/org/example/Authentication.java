@@ -6,6 +6,8 @@ import java.sql.SQLException;
 public class Authentication {
     private final Database db;
 
+    private User authenticatedUser;
+
     public Authentication(Database database) {
         this.db = database;
 
@@ -46,13 +48,20 @@ public class Authentication {
             if (res.next()) {
                 user = User.makeUserFromSql(res);
 
-                return username.equals(user.getUsername())
-                        && password.equals(user.getPassword());
+                if (username.equals(user.getUsername())
+                        && password.equals(user.getPassword())) {
+                    authenticatedUser = user;
+                    return true;
+                }
             }
 
             return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public User getAuthenticatedUser() {
+        return authenticatedUser;
     }
 }

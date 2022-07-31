@@ -11,8 +11,11 @@ public class MyBank extends AbstractTableModel {
 
     private final Database db;
 
-    public MyBank(Database database) {
+    private User user;
+
+    public MyBank(Database database, User user) {
         this.db = database;
+        this.user = user;
         createTransactionsTable();
         if (!db.isTableSeeded("transactions")) {
             seedTransactions();
@@ -20,8 +23,8 @@ public class MyBank extends AbstractTableModel {
     }
 
     private void seedTransactions() {
-        Transaction tr1 = new Transaction(1, new Date(2022 - 1900, Calendar.MARCH, 5, 10, 23, 20), 22.04, TransactionType.Credit, "Bought something");
-        Transaction tr2 = new Transaction(2, new Date(2022 - 1900, Calendar.APRIL, 6, 14, 57, 11), 40.84, TransactionType.Debit, "Deposit something");
+        Transaction tr1 = new Transaction(1, 1, new Date(2022 - 1900, Calendar.MARCH, 5, 10, 23, 20), 22.04, TransactionType.Credit, "Bought something");
+        Transaction tr2 = new Transaction(2, 2, new Date(2022 - 1900, Calendar.APRIL, 6, 14, 57, 11), 40.84, TransactionType.Debit, "Deposit something");
 
         db.runQuery(tr1.toSql());
         db.runQuery(tr2.toSql());
@@ -29,23 +32,27 @@ public class MyBank extends AbstractTableModel {
 
     private void createTransactionsTable() {
         String query = "CREATE TABLE IF NOT EXISTS transactions (\n"
-                + "id integer PRIMARY KEY,\n"
+                + "id integer,\n"
+                + "userId integer,\n"
                 + "date TEXT,\n"
                 + "type TEXT,\n"
                 + "amount REAL,\n"
-                + "description TEXT"
+                + "description TEXT,\n"
+                + "PRIMARY KEY (id, userId)"
                 + "); ";
 
         db.runQuery(query);
     }
 
     private List<Transaction> getTransactions() {
-        String query = "SELECT * FROM transactions;";
-        ResultSet rs = db.selectQuery(query);
+        String query = "SELECT * FROM transactions WHERE userId = "
+                + user.getId() + ";";
 
         List<Transaction> transactions = new ArrayList<>();
 
         try {
+            ResultSet rs = db.selectQuery(query);
+
             while (rs.next()) {
                 transactions.add(Transaction.makeTransactionFromSql(rs));
             }
@@ -65,7 +72,16 @@ public class MyBank extends AbstractTableModel {
     }
 
     public void createTransaction(double amount, TransactionType type, String description) {
-        db.runQuery(new Transaction(getTransactions().size()+1, new Date(), amount, type, description).toSql());
+        int maxValue = 1;
+
+        Optional<Transaction> transaction = getTransactions().stream()
+                        .max((a, b) -> a.getId() > b.getId() ? 1 : -1);
+
+        if (transaction.isPresent())
+            maxValue = transaction.get().getId() + 1;
+
+        db.runQuery(new Transaction(maxValue+1, user.getId(), new Date(), amount, type, description).toSql());
+
         fireTableDataChanged();
     }
 

@@ -13,7 +13,7 @@ public class Main {
         login.setVisible(true);
 
         if (login.isSucceeded()) {
-            MyBank bank = new MyBank(db);
+            MyBank bank = new MyBank(db, authSvc.getAuthenticatedUser());
             new MainWindow(bank);
         }
     }

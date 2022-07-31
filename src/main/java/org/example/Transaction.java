@@ -8,14 +8,17 @@ import java.util.Date;
 
 public class Transaction {
     private int id;
+
+    private int userId;
     private Date date;
     private Money amount;
     private TransactionType type;
     private String description;
 
-    public Transaction(int id, Date date, double amount, TransactionType type, String description) {
+    public Transaction(int id, int userId, Date date, double amount, TransactionType type, String description) {
         // TODO: amount must be positive
         this.id = id;
+        this.userId = userId;
         this.date = date;
         this.amount = new Money(amount);
         this.type = type;
@@ -24,6 +27,10 @@ public class Transaction {
 
     public int getId() {
         return id;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public Date getDate() {
@@ -53,8 +60,9 @@ public class Transaction {
     public String toSql() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-        return "INSERT INTO transactions (id, date, type, amount, description) VALUES ("
-                + id + ", '"
+        return "INSERT INTO transactions (id, userId, date, type, amount, description) VALUES ("
+                + id + ", "
+                + userId + ", '"
                 + formatter.format(date) + "', '"
                 + type.toString() + "', "
                 + amount.getValue() + ", '"
@@ -66,7 +74,13 @@ public class Transaction {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = formatter.parse(rs.getString("date"), new ParsePosition(0));
-            return new Transaction(rs.getInt("id"), date, rs.getDouble("amount"), TransactionType.valueOf(rs.getString("type")), rs.getString("description"));
+            return new Transaction(
+                    rs.getInt("id"),
+                    rs.getInt("userId"),
+                    date,
+                    rs.getDouble("amount"),
+                    TransactionType.valueOf(rs.getString("type")),
+                    rs.getString("description"));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
